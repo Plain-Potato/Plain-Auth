@@ -6,10 +6,13 @@ enum PlainAuthOAuthProviderType { google }
 enum PlainAuthOAuthProviderScope { name, email }
 
 abstract class PlainAuthOAuthProvider {
-  PlainAuthOAuthProvider({required this.scopes});
+  PlainAuthOAuthProvider({required this.scopes, this.firebaseAuth});
 
   @protected
   final List<String> scopes;
+
+  @protected
+  FirebaseAuth? firebaseAuth;
 
   Future<UserCredential?> login();
 }

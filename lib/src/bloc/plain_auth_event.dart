@@ -9,3 +9,9 @@ final class PlainAuthLoginRequestedEvent extends PlainAuthEvent {
 
   final PlainAuthOAuthProviderType provider;
 }
+
+final class _PlainAuthAuthenticationStateChangedEvent extends PlainAuthEvent {
+  _PlainAuthAuthenticationStateChangedEvent({required this.state});
+
+  final PlainAuthState state;
+}

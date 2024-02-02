@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:plain_auth/src/resources/providers/plain_auth_oauth_provider.dart';
 
@@ -18,6 +19,18 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
         super(PlainAuthUnauthenticated()) {
     on<PlainAuthLoginRequestedEvent>(_onLoginRequested);
     on<PlainAuthLogoutRequestedEvent>(_onLogoutRequested);
+    on<_PlainAuthAuthenticationStateChangedEvent>(
+        _onAuthenticationStateChanged);
+
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        add(_PlainAuthAuthenticationStateChangedEvent(
+            state: PlainAuthUnauthenticated()));
+      } else {
+        add(_PlainAuthAuthenticationStateChangedEvent(
+            state: PlainAuthAuthenticated()));
+      }
+    });
   }
 
   final PlainAuthOAuthRepository _repository;
@@ -25,18 +38,23 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
 
   Future<void> _onLoginRequested(
       PlainAuthLoginRequestedEvent event, Emitter<PlainAuthState> emit) async {
-    // emit(PlainAuthUnauthenticated(loading: true));
-    final user =
-        await _repository.login(provider: event.provider, scopes: _scopes);
-    if (user != null) {
-      emit(PlainAuthAuthenticated());
-    }
+    await _repository.login(provider: event.provider, scopes: _scopes);
   }
 
   void _onLogoutRequested(
       PlainAuthLogoutRequestedEvent event, Emitter<PlainAuthState> emit) {
     _repository.logout();
-    emit(PlainAuthUnauthenticated());
+  }
+
+  void _onAuthenticationStateChanged(
+      _PlainAuthAuthenticationStateChangedEvent event,
+      Emitter<PlainAuthState> emit) async {
+    switch (event.state) {
+      case PlainAuthAuthenticated():
+        return emit(PlainAuthAuthenticated());
+      case PlainAuthUnauthenticated():
+        return emit(PlainAuthUnauthenticated());
+    }
   }
 
   @override
