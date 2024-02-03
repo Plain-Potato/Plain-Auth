@@ -1,6 +1,9 @@
 part of 'plain_auth_bloc.dart';
 
-sealed class PlainAuthState {}
+sealed class PlainAuthState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class PlainAuthAuthenticated extends PlainAuthState {}
 

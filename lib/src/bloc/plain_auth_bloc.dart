@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:plain_auth/src/resources/providers/plain_auth_oauth_provider.dart';
@@ -13,7 +14,8 @@ part 'plain_auth_state.dart';
 class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   PlainAuthBloc(
       {required PlainAuthOAuthRepository plainAuthOAuthRepository,
-      required scopes})
+      required scopes,
+      FirebaseAuth? firebaseAuth})
       : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
         super(PlainAuthUnauthenticated()) {
@@ -22,13 +24,19 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
     on<_PlainAuthAuthenticationStateChangedEvent>(
         _onAuthenticationStateChanged);
 
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    final _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+
+    _firebaseAuth.authStateChanges().listen((User? user) {
       if (user == null) {
-        add(_PlainAuthAuthenticationStateChangedEvent(
-            state: PlainAuthUnauthenticated()));
+        if (state != PlainAuthUnauthenticated()) {
+          add(_PlainAuthAuthenticationStateChangedEvent(
+              state: PlainAuthUnauthenticated()));
+        }
       } else {
-        add(_PlainAuthAuthenticationStateChangedEvent(
-            state: PlainAuthAuthenticated()));
+        if (state != PlainAuthAuthenticated()) {
+          add(_PlainAuthAuthenticationStateChangedEvent(
+              state: PlainAuthAuthenticated()));
+        }
       }
     });
   }
