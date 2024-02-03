@@ -33,7 +33,6 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
           return;
         }
       }
-
       plainAuthBloc.add(PlainAuthLoginRequestedEvent(provider: provider));
     }
 

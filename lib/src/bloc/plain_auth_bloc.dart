@@ -12,6 +12,9 @@ part 'plain_auth_event.dart';
 part 'plain_auth_state.dart';
 
 class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
+  /*
+  Constructor.
+  */
   PlainAuthBloc(
       {required PlainAuthOAuthRepository plainAuthOAuthRepository,
       required scopes,
@@ -19,23 +22,29 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
         super(PlainAuthUnauthenticated()) {
+    /*
+    Register event listeners
+     */
     on<PlainAuthLoginRequestedEvent>(_onLoginRequested);
     on<PlainAuthLogoutRequestedEvent>(_onLogoutRequested);
     on<_PlainAuthAuthenticationStateChangedEvent>(
         _onAuthenticationStateChanged);
 
-    final _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
-
-    _firebaseAuth.authStateChanges().listen((User? user) {
+    /*
+    Listen to authStateChange event and add _PlainAuthAuthenticationStateChangedEvent with state accordingly.
+     */
+    (firebaseAuth ?? FirebaseAuth.instance)
+        .authStateChanges()
+        .listen((User? user) {
       if (user == null) {
         if (state != PlainAuthUnauthenticated()) {
           add(_PlainAuthAuthenticationStateChangedEvent(
               state: PlainAuthUnauthenticated()));
         }
       } else {
-        if (state != PlainAuthAuthenticated()) {
+        if (state.runtimeType != PlainAuthAuthenticated) {
           add(_PlainAuthAuthenticationStateChangedEvent(
-              state: PlainAuthAuthenticated()));
+              state: PlainAuthAuthenticated(user: user)));
         }
       }
     });
@@ -44,9 +53,17 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   final PlainAuthOAuthRepository _repository;
   final List<PlainAuthOAuthProviderScope> _scopes;
 
+  /*
+  Event listeners.
+   */
   Future<void> _onLoginRequested(
       PlainAuthLoginRequestedEvent event, Emitter<PlainAuthState> emit) async {
-    await _repository.login(provider: event.provider, scopes: _scopes);
+    emit(PlainAuthUnauthenticated(loading: true));
+    final user =
+        await _repository.login(provider: event.provider, scopes: _scopes);
+    if (user == null) {
+      emit(PlainAuthUnauthenticated());
+    }
   }
 
   void _onLogoutRequested(
@@ -57,20 +74,24 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   void _onAuthenticationStateChanged(
       _PlainAuthAuthenticationStateChangedEvent event,
       Emitter<PlainAuthState> emit) async {
-    switch (event.state) {
-      case PlainAuthAuthenticated():
-        return emit(PlainAuthAuthenticated());
-      case PlainAuthUnauthenticated():
-        return emit(PlainAuthUnauthenticated());
-    }
+    return emit(event.state);
   }
+
+  /*
+  Below are methods for storage use.
+   */
 
   @override
   PlainAuthState? fromJson(Map<String, dynamic> json) {
     final state = json['state'];
     switch (state) {
       case 'PlainAuthAuthenticated':
-        return PlainAuthAuthenticated();
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          return PlainAuthAuthenticated(user: user);
+        } else {
+          return PlainAuthUnauthenticated();
+        }
       case 'PlainAuthUnauthenticated':
         return PlainAuthUnauthenticated();
     }

@@ -128,7 +128,7 @@ void main() {
         when(() => firebaseAuth.authStateChanges())
             .thenAnswer((_) => streamFunc());
       },
-      expect: () => [PlainAuthAuthenticated()],
+      expect: () => [PlainAuthAuthenticated(user: FakeUser())],
     );
 
     blocTest(
@@ -147,7 +147,10 @@ void main() {
         when(() => firebaseAuth.authStateChanges())
             .thenAnswer((_) => streamFunc());
       },
-      expect: () => [PlainAuthAuthenticated(), PlainAuthUnauthenticated()],
+      expect: () => [
+        PlainAuthAuthenticated(user: FakeUser()),
+        PlainAuthUnauthenticated()
+      ],
     );
 
     blocTest(
@@ -166,7 +169,7 @@ void main() {
         when(() => firebaseAuth.authStateChanges())
             .thenAnswer((_) => streamFunc());
       },
-      expect: () => [PlainAuthAuthenticated()],
+      expect: () => [PlainAuthAuthenticated(user: FakeUser())],
     );
 
     blocTest(
@@ -186,7 +189,10 @@ void main() {
         when(() => firebaseAuth.authStateChanges())
             .thenAnswer((_) => streamFunc());
       },
-      expect: () => [PlainAuthAuthenticated(), PlainAuthUnauthenticated()],
+      expect: () => [
+        PlainAuthAuthenticated(user: FakeUser()),
+        PlainAuthUnauthenticated()
+      ],
     );
   });
 }
