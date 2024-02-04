@@ -1,6 +1,9 @@
 part of 'plain_auth_bloc.dart';
 
-sealed class PlainAuthEvent {}
+sealed class PlainAuthEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 final class PlainAuthLogoutRequestedEvent extends PlainAuthEvent {}
 

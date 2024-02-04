@@ -10,20 +10,6 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
 
   final PlainAuthOAuthProviderType provider;
 
-  String _getProviderText() {
-    switch (provider) {
-      case PlainAuthOAuthProviderType.google:
-        return 'GOOGLE';
-    }
-  }
-
-  IconData _getIcon() {
-    switch (provider) {
-      case PlainAuthOAuthProviderType.google:
-        return FontAwesomeIcons.google;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     void onTap() {
@@ -37,6 +23,7 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
     }
 
     return InkWell(
+      key: Key('${provider.text} button'),
       onTap: onTap,
       child: Container(
         width: double.infinity,
@@ -52,13 +39,13 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
             children: [
               SizedBox(
                 width: 40,
-                child: FaIcon(_getIcon()),
+                child: FaIcon(provider.icon),
               ),
               Center(
                   child: const Text(
                 'socialLoginButtonText',
                 style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-              ).tr(namedArgs: {'provider': _getProviderText()})),
+              ).tr(namedArgs: {'provider': provider.text})),
               const SizedBox(
                 width: 40,
               )
