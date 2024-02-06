@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:plain_auth/src/resources/providers/plain_auth_oauth_provider.dart';
+import 'package:plain_auth/src/resources/datasources/plain_auth_oauth_provider.dart';
 
 import '../resources/repositories/plain_auth_oauth_repository.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plain_auth/src/bloc/plain_auth_bloc.dart';
-import 'package:plain_auth/src/resources/providers/plain_auth_oauth_provider.dart';
+import 'package:plain_auth/src/resources/datasources/plain_auth_oauth_provider.dart';
 
 class PlainAuthOAuthLoginButton extends StatelessWidget {
   const PlainAuthOAuthLoginButton({super.key, required this.provider});

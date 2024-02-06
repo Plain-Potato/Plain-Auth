@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../providers/providers.dart';
+import '../datasources/providers.dart';
 
 class PlainAuthOAuthRepository {
   PlainAuthOAuthProvider _getOAuthProvider(
