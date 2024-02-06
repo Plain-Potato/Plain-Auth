@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,12 +23,17 @@ void main() {
         ),
       );
 
-      final textFinder = find.text('socialLoginButtonText');
-      final iconFinder = find.byWidgetPredicate((Widget widget) =>
-          widget is FaIcon && widget.icon == providerType.icon);
+      await widgetTester.pumpAndSettle();
 
-      expect(textFinder, findsOneWidget);
-      expect(iconFinder, findsOneWidget);
+      expect(
+        find.text('socialLoginButtonText'.tr(
+            namedArgs: {'provider': PlainAuthOAuthProviderType.google.text})),
+        findsOneWidget,
+      );
+      expect(
+          find.byWidgetPredicate((Widget widget) =>
+              widget is FaIcon && widget.icon == providerType.icon),
+          findsOneWidget);
     });
 
     testWidgets('PlainAuthLoginRequestedEvent should be added when clicked.',
