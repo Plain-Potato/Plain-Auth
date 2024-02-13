@@ -27,5 +27,3 @@ dev_dependencies:
   bloc_test: ^9.1.5
 
 flutter:
-  assets:
-    - assets/translations/
