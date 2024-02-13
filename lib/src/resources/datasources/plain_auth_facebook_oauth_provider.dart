@@ -1,19 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plain_auth/plain_auth.dart';
 
 import 'plain_auth_oauth_provider.dart';
 
 class PlainAuthFacebookLoginFailure implements Exception {
-  PlainAuthFacebookLoginFailure([this.message]);
+  PlainAuthFacebookLoginFailure([this.message, this.code]);
 
   final dynamic message;
+  final dynamic code;
 
   @override
   String toString() {
     Object? message = this.message;
     if (message == null) return "PlainAuthFacebookLoginFailure";
-    return "PlainAuthFacebookLoginFailure: $message";
+    return "PlainAuthFacebookLoginFailure\nmessage: $message\ncode: $code";
   }
 }
 
@@ -50,12 +52,24 @@ class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
     //
     // firebaseAuth ??= FirebaseAuth.instance;
     //
+
+    firebaseAuth ??= FirebaseAuth.instance;
+
     try {
-      return await super
-          .firebaseAuth!
-          .signInWithCredential(facebookAuthCredential);
+      return await firebaseAuth!.signInWithCredential(facebookAuthCredential);
     } on FirebaseAuthException catch (e) {
-      throw PlainAuthFacebookLoginFailure(e.message);
+      if (e.code == 'account-exists-with-different-credential') {
+        final signInMethods =
+            await firebaseAuth!.fetchSignInMethodsForEmail(e.email!);
+        final providerId = signInMethods[0];
+        if (providerId == GoogleAuthProvider.PROVIDER_ID) {
+          final credential = await PlainAuthGoogleOAuthProvider().login();
+          if (credential != null) {
+            return await credential.user!.linkWithCredential(e.credential!);
+          }
+        }
+      }
+      throw PlainAuthFacebookLoginFailure(e.message, e.code);
     }
   }
 }

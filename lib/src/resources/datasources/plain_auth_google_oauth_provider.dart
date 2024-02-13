@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plain_auth/plain_auth.dart';
 
 import 'plain_auth_oauth_provider.dart';
 
@@ -46,6 +47,17 @@ class PlainAuthGoogleOAuthProvider extends PlainAuthOAuthProvider {
     try {
       return await super.firebaseAuth!.signInWithCredential(oauthCredential);
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        final signInMethods =
+            await firebaseAuth!.fetchSignInMethodsForEmail(e.email!);
+        final providerId = signInMethods[0];
+        if (providerId == FacebookAuthProvider.PROVIDER_ID) {
+          final credential = await PlainAuthFacebookOAuthProvider().login();
+          if (credential != null) {
+            return await credential.user!.linkWithCredential(e.credential!);
+          }
+        }
+      }
       throw PlainAuthGoogleLoginFailure(e.message);
     }
   }
