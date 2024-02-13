@@ -3,18 +3,12 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plain_auth/plain_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class PlainAuthAppleOAuthProvider extends PlainAuthOAuthProvider {
   PlainAuthAppleOAuthProvider(
-      {super.scopes = const ['email', 'profile', 'openid'],
-      GoogleSignIn? googleSignIn,
-      super.firebaseAuth})
-      : _googleSignIn = googleSignIn ?? GoogleSignIn(scopes: scopes);
-
-  final GoogleSignIn _googleSignIn;
+      {super.scopes = const ['email', 'name'], super.firebaseAuth});
 
   String _generateNonce([int length = 32]) {
     const charset =
@@ -36,6 +30,14 @@ class PlainAuthAppleOAuthProvider extends PlainAuthOAuthProvider {
     final nonce = _sha256ofString(rawNonce);
 
     try {
+      final scopes = <AppleIDAuthorizationScopes>[];
+      for (final scope in super.scopes) {
+        if (scope == 'email') {
+          scopes.add(AppleIDAuthorizationScopes.email);
+        } else if (scope == 'name') {
+          scopes.add(AppleIDAuthorizationScopes.fullName);
+        }
+      }
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,

@@ -28,6 +28,17 @@ class PlainAuthOAuthRepository {
       case PlainAuthOAuthProviderType.facebook:
         oAuthProvider = PlainAuthFacebookOAuthProvider();
       case PlainAuthOAuthProviderType.apple:
+        final appleOAuthScopes = [];
+        for (final s in scopes) {
+          switch (s) {
+            case PlainAuthOAuthProviderScope.email:
+              appleOAuthScopes.add('email');
+              break;
+            case PlainAuthOAuthProviderScope.name:
+              appleOAuthScopes.add('name');
+              break;
+          }
+        }
         oAuthProvider = PlainAuthAppleOAuthProvider();
     }
 
