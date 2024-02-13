@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:plain_auth/src/resources/datasources/plain_auth_apple_oauth_provider.dart';
 
 import '../datasources/providers.dart';
 
@@ -26,6 +27,8 @@ class PlainAuthOAuthRepository {
         oAuthProvider = PlainAuthGoogleOAuthProvider();
       case PlainAuthOAuthProviderType.facebook:
         oAuthProvider = PlainAuthFacebookOAuthProvider();
+      case PlainAuthOAuthProviderType.apple:
+        oAuthProvider = PlainAuthAppleOAuthProvider();
     }
 
     return oAuthProvider;

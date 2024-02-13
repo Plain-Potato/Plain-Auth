@@ -44,7 +44,7 @@ void main() {
       });
 
       test(
-          'should throw PlainAuthGoogleLoginFailure when firebaseAuth.signInWithCredential throws FirebaseAuthException',
+          'should throw PlainAuthLoginFailure when firebaseAuth.signInWithCredential throws FirebaseAuthException',
           () async {
         final googleSignIn = MockGoogleSignIn();
         final googleSignInAccount = MockGoogleSignInAccount();
@@ -65,7 +65,7 @@ void main() {
             googleSignIn: googleSignIn, firebaseAuth: firebaseAuth);
 
         expect(() async => await plainAuthGoogleOAuthProvider.login(),
-            throwsA(isA<PlainAuthGoogleLoginFailure>()));
+            throwsA(isA<PlainAuthLoginFailure>()));
       });
     });
   });
