@@ -31,7 +31,7 @@ void main() {
 
     group('login()', () {
       test(
-          'should throw PlainAuthGoogleLoginFailure when account is null and googleSignIn.signIn should be called once',
+          'should return null when account is null and googleSignIn.signIn should be called once',
           () async {
         final googleSignIn = MockGoogleSignIn();
         when(() => googleSignIn.signIn()).thenAnswer((_) => Future(() => null));
@@ -39,8 +39,7 @@ void main() {
         plainAuthGoogleOAuthProvider =
             PlainAuthGoogleOAuthProvider(googleSignIn: googleSignIn);
 
-        expect(() async => await plainAuthGoogleOAuthProvider.login(),
-            throwsA(isA<PlainAuthGoogleLoginFailure>()));
+        expect(await plainAuthGoogleOAuthProvider.login(), null);
         verify(() => googleSignIn.signIn()).called(1);
       });
 

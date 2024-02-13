@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,8 +25,7 @@ void main() {
       await widgetTester.pumpAndSettle();
 
       expect(
-        find.text('socialLoginButtonText'.tr(
-            namedArgs: {'provider': PlainAuthOAuthProviderType.google.text})),
+        find.text('socialLoginButtonText'),
         findsOneWidget,
       );
       expect(
