@@ -35,28 +35,32 @@ class PlainAuthAppleOAuthProvider extends PlainAuthOAuthProvider {
     final rawNonce = _generateNonce();
     final nonce = _sha256ofString(rawNonce);
 
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
-
-    final oauthCredential = OAuthProvider("apple.com").credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
-
-    firebaseAuth ??= FirebaseAuth.instance;
-
     try {
-      return await super.firebaseAuth!.signInWithCredential(oauthCredential);
-    } on FirebaseAuthException catch (e) {
-      return await handleFirebaseAuthError(
-          e: e,
-          firebaseAuth: firebaseAuth!,
-          provider: PlainAuthOAuthProviderType.apple);
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      firebaseAuth ??= FirebaseAuth.instance;
+
+      try {
+        return await super.firebaseAuth!.signInWithCredential(oauthCredential);
+      } on FirebaseAuthException catch (e) {
+        return await handleFirebaseAuthError(
+            e: e,
+            firebaseAuth: firebaseAuth!,
+            provider: PlainAuthOAuthProviderType.apple);
+      }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      return null;
     }
   }
 }
