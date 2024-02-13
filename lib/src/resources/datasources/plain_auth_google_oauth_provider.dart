@@ -30,7 +30,8 @@ class PlainAuthGoogleOAuthProvider extends PlainAuthOAuthProvider {
     final account = await _googleSignIn.signIn();
 
     if (account == null) {
-      throw PlainAuthGoogleLoginFailure('GoogleSignInAccount is null');
+      return null;
+      // throw PlainAuthGoogleLoginFailure('GoogleSignInAccount is null');
     }
 
     final GoogleSignInAuthentication googleSignInAuthentication =

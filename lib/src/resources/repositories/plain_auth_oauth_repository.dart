@@ -24,6 +24,8 @@ class PlainAuthOAuthRepository {
           }
         }
         oAuthProvider = PlainAuthGoogleOAuthProvider();
+      case PlainAuthOAuthProviderType.facebook:
+        oAuthProvider = PlainAuthFacebookOAuthProvider();
     }
 
     return oAuthProvider;

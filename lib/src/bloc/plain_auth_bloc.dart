@@ -37,10 +37,8 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
         .authStateChanges()
         .listen((User? user) {
       if (user == null) {
-        if (state != PlainAuthUnauthenticated()) {
-          add(_PlainAuthAuthenticationStateChangedEvent(
-              state: PlainAuthUnauthenticated()));
-        }
+        add(_PlainAuthAuthenticationStateChangedEvent(
+            state: PlainAuthUnauthenticated()));
       } else {
         if (state.runtimeType != PlainAuthAuthenticated) {
           add(_PlainAuthAuthenticationStateChangedEvent(

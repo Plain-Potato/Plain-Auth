@@ -15,4 +15,7 @@ class PlainAuthUnauthenticated extends PlainAuthState {
   PlainAuthUnauthenticated({this.loading = false});
 
   final bool loading;
+
+  @override
+  List<Object?> get props => [loading];
 }

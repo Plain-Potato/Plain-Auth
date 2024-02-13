@@ -18,8 +18,8 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
         if ((plainAuthBloc.state as PlainAuthUnauthenticated).loading) {
           return;
         }
+        plainAuthBloc.add(PlainAuthLoginRequestedEvent(provider: provider));
       }
-      plainAuthBloc.add(PlainAuthLoginRequestedEvent(provider: provider));
     }
 
     return InkWell(
