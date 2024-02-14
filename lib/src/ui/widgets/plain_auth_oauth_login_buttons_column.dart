@@ -19,7 +19,7 @@ class PlainAUthOAuthLoginButtonsColumn extends StatelessWidget {
         const PlainAuthOAuthLoginButton(
           provider: PlainAuthOAuthProviderType.facebook,
         ),
-        if (Platform.isIOS) ...[
+        if (Platform.isIOS || Platform.isMacOS) ...[
           const SizedBox(
             height: 8,
           ),

@@ -1,11 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:plain_auth/plain_auth.dart';
 
 class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
   PlainAuthFacebookOAuthProvider(
       {super.scopes = const [], FacebookAuth? facebookAuth, super.firebaseAuth})
-      : _facebookAuth = facebookAuth ?? FacebookAuth.instance;
+      : _facebookAuth = facebookAuth ?? FacebookAuth.instance {
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      FacebookAuth.i.webAndDesktopInitialize(
+        appId: "3823348807877566",
+        cookie: true,
+        xfbml: true,
+        version: "v18.0",
+      );
+    }
+  }
 
   final FacebookAuth _facebookAuth;
 
