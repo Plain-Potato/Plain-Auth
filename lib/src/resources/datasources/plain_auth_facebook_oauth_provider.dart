@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:facebook_auth_desktop/facebook_auth_desktop.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -9,19 +12,25 @@ class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
       : _facebookAuth = facebookAuth ?? FacebookAuth.instance;
 
   final FacebookAuth _facebookAuth;
+  late final FacebookAuthDesktopPlugin _plugin;
 
   @override
   Future<UserCredential?> login() async {
+    final LoginResult loginResult;
+
     if (defaultTargetPlatform == TargetPlatform.macOS) {
-      FacebookAuth.i.webAndDesktopInitialize(
-        appId: "3823348807877566",
-        cookie: true,
-        xfbml: true,
-        version: "v18.0",
-      );
+      _plugin = FacebookAuthDesktopPlugin();
+      _plugin.webAndDesktopInitialize(
+          appId: '3823348807877566',
+          cookie: true,
+          xfbml: true,
+          version: 'v18.0');
+
+      loginResult = await _plugin.login();
+    } else {
+      loginResult = await _facebookAuth.login();
     }
 
-    final LoginResult loginResult = await _facebookAuth.login();
     if (loginResult.accessToken == null) {
       return null;
     }
@@ -39,4 +48,10 @@ class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
           provider: PlainAuthOAuthProviderType.facebook);
     }
   }
+}
+
+String prettyPrint(Map json) {
+  JsonEncoder encoder = const JsonEncoder.withIndent('  ');
+  String pretty = encoder.convert(json);
+  return pretty;
 }
