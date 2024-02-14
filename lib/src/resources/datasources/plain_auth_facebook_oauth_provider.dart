@@ -6,7 +6,12 @@ import 'package:plain_auth/plain_auth.dart';
 class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
   PlainAuthFacebookOAuthProvider(
       {super.scopes = const [], FacebookAuth? facebookAuth, super.firebaseAuth})
-      : _facebookAuth = facebookAuth ?? FacebookAuth.instance {
+      : _facebookAuth = facebookAuth ?? FacebookAuth.instance;
+
+  final FacebookAuth _facebookAuth;
+
+  @override
+  Future<UserCredential?> login() async {
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       FacebookAuth.i.webAndDesktopInitialize(
         appId: "3823348807877566",
@@ -15,12 +20,7 @@ class PlainAuthFacebookOAuthProvider extends PlainAuthOAuthProvider {
         version: "v18.0",
       );
     }
-  }
 
-  final FacebookAuth _facebookAuth;
-
-  @override
-  Future<UserCredential?> login() async {
     final LoginResult loginResult = await _facebookAuth.login();
     if (loginResult.accessToken == null) {
       return null;
