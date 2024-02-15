@@ -16,7 +16,7 @@ class PlainAuthAppleOAuthProvider extends PlainAuthOAuthProvider {
     try {
       return await firebaseAuth!.signInWithProvider(appleProvider);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'canceled') {
+      if (e.code == 'canceled' || e.code == 'web-context-canceled') {
         return null;
       }
       return await handleFirebaseAuthError(

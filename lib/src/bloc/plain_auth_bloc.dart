@@ -15,11 +15,11 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   /*
   Constructor.
   */
-  PlainAuthBloc(
-      {required PlainAuthOAuthRepository plainAuthOAuthRepository,
-      required scopes,
-      FirebaseAuth? firebaseAuth})
-      : _repository = plainAuthOAuthRepository,
+  PlainAuthBloc({
+    required PlainAuthOAuthRepository plainAuthOAuthRepository,
+    required scopes,
+    FirebaseAuth? firebaseAuth,
+  })  : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
         super(PlainAuthUnauthenticated()) {
     /*
@@ -35,7 +35,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
      */
     (firebaseAuth ?? FirebaseAuth.instance)
         .authStateChanges()
-        .listen((User? user) {
+        .listen((User? user) async {
       if (user == null) {
         add(_PlainAuthAuthenticationStateChangedEvent(
             state: PlainAuthUnauthenticated()));
