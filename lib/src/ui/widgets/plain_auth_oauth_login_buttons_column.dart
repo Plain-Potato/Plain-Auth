@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:plain_auth/plain_auth.dart';
 
@@ -8,25 +6,23 @@ class PlainAUthOAuthLoginButtonsColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
-        const PlainAuthOAuthLoginButton(
+        PlainAuthOAuthLoginButton(
           provider: PlainAuthOAuthProviderType.google,
         ),
-        const SizedBox(
+        SizedBox(
           height: 8,
         ),
-        const PlainAuthOAuthLoginButton(
+        PlainAuthOAuthLoginButton(
           provider: PlainAuthOAuthProviderType.facebook,
         ),
-        if (Platform.isIOS || Platform.isMacOS) ...[
-          const SizedBox(
-            height: 8,
-          ),
-          const PlainAuthOAuthLoginButton(
-            provider: PlainAuthOAuthProviderType.apple,
-          )
-        ]
+        SizedBox(
+          height: 8,
+        ),
+        PlainAuthOAuthLoginButton(
+          provider: PlainAuthOAuthProviderType.apple,
+        )
       ],
     );
   }

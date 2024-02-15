@@ -20,9 +20,10 @@ class PlainAuthAppleOAuthProvider extends PlainAuthOAuthProvider {
         return null;
       }
       return await handleFirebaseAuthError(
-          e: e,
-          firebaseAuth: firebaseAuth!,
-          provider: PlainAuthOAuthProviderType.apple);
+        e: e,
+        firebaseAuth: firebaseAuth!,
+        provider: PlainAuthOAuthProviderType.apple,
+      );
     }
   }
 }
