@@ -37,12 +37,21 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
         .authStateChanges()
         .listen((User? user) async {
       if (user == null) {
-        add(_PlainAuthAuthenticationStateChangedEvent(
-            state: PlainAuthUnauthenticated()));
+        add(
+          _PlainAuthAuthenticationStateChangedEvent(
+            state: PlainAuthUnauthenticated(),
+          ),
+        );
       } else {
+        if (user.photoURL == null) {
+          await user.updatePhotoURL(user.providerData[0].photoURL);
+        }
         if (state.runtimeType != PlainAuthAuthenticated) {
-          add(_PlainAuthAuthenticationStateChangedEvent(
-              state: PlainAuthAuthenticated(user: user)));
+          add(
+            _PlainAuthAuthenticationStateChangedEvent(
+              state: PlainAuthAuthenticated(user: user),
+            ),
+          );
         }
       }
     });
