@@ -18,7 +18,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   PlainAuthBloc({
     required PlainAuthOAuthRepository plainAuthOAuthRepository,
     required scopes,
-    FirebaseAuth? firebaseAuth,
+    required this.firebaseAuth,
   })  : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
         super(PlainAuthUnauthenticated()) {
@@ -33,9 +33,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
     /*
     Listen to authStateChange event and add _PlainAuthAuthenticationStateChangedEvent with state accordingly.
      */
-    (firebaseAuth ?? FirebaseAuth.instance)
-        .authStateChanges()
-        .listen((User? user) async {
+    firebaseAuth.authStateChanges().listen((User? user) async {
       if (user == null) {
         add(
           _PlainAuthAuthenticationStateChangedEvent(
@@ -44,12 +42,16 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
         );
       } else {
         if (user.photoURL == null) {
-          await user.updatePhotoURL(user.providerData[0].photoURL);
+          await user.updatePhotoURL(
+              'https://firebasestorage.googleapis.com/v0/b/plain-potato-412823.appspot.com/o/default_images%2Favatar.png?alt=media&token=b255ea7e-b59c-4dd8-81a5-2b9739f4c4e9');
+        }
+        if (user.displayName == null) {
+          user.updateDisplayName(user.providerData[0].displayName);
         }
         if (state.runtimeType != PlainAuthAuthenticated) {
           add(
             _PlainAuthAuthenticationStateChangedEvent(
-              state: PlainAuthAuthenticated(user: user),
+              state: PlainAuthAuthenticated(),
             ),
           );
         }
@@ -59,6 +61,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
 
   final PlainAuthOAuthRepository _repository;
   final List<PlainAuthOAuthProviderScope> _scopes;
+  final FirebaseAuth firebaseAuth;
 
   /*
   Event listeners.
@@ -95,7 +98,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       case 'PlainAuthAuthenticated':
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          return PlainAuthAuthenticated(user: user);
+          return PlainAuthAuthenticated();
         } else {
           return PlainAuthUnauthenticated();
         }

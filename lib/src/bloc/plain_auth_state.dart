@@ -5,11 +5,7 @@ sealed class PlainAuthState extends Equatable {
   List<Object?> get props => [];
 }
 
-class PlainAuthAuthenticated extends PlainAuthState {
-  PlainAuthAuthenticated({required this.user});
-
-  final User user;
-}
+class PlainAuthAuthenticated extends PlainAuthState {}
 
 class PlainAuthUnauthenticated extends PlainAuthState {
   PlainAuthUnauthenticated({this.loading = false});
