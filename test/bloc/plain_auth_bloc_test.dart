@@ -25,7 +25,7 @@ class MockStreamSubscription extends Mock
 class MockPlainAuthOAuthProvider extends Mock
     implements PlainAuthOAuthProvider {}
 
-class FakeUser extends Fake implements User {}
+class MockUser extends Mock implements User {}
 
 class FakeUserCredential extends Fake implements UserCredential {}
 
@@ -40,6 +40,7 @@ void main() {
     late FirebaseAuth firebaseAuth;
     late MockStream stream;
     late MockStreamSubscription streamSubscription;
+    late User user;
 
     setUp(() {
       repository = MockPlainOAuthRepository();
@@ -47,6 +48,10 @@ void main() {
       firebaseAuth = MockFirebaseAuth();
       stream = MockStream();
       streamSubscription = MockStreamSubscription();
+      user = MockUser();
+
+      when(() => user.displayName).thenReturn('');
+      when(() => user.photoURL).thenReturn('');
 
       when(
         () => storage.write(any(), any<dynamic>()),
@@ -122,7 +127,7 @@ void main() {
       ),
       setUp: () {
         Stream<User?> streamFunc() async* {
-          yield FakeUser();
+          yield user;
         }
 
         when(() => firebaseAuth.authStateChanges())
@@ -140,7 +145,7 @@ void main() {
       ),
       setUp: () {
         Stream<User?> streamFunc() async* {
-          yield FakeUser();
+          yield user;
           yield null;
         }
 
@@ -159,8 +164,8 @@ void main() {
       ),
       setUp: () {
         Stream<User?> streamFunc() async* {
-          yield FakeUser();
-          yield FakeUser();
+          yield user;
+          yield user;
         }
 
         when(() => firebaseAuth.authStateChanges())
@@ -178,7 +183,7 @@ void main() {
       ),
       setUp: () {
         Stream<User?> streamFunc() async* {
-          yield FakeUser();
+          yield user;
           yield null;
           yield null;
         }
