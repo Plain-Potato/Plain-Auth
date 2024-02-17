@@ -97,7 +97,7 @@ void main() {
               scopes: scopes,
               firebaseAuth: firebaseAuth,
             ),
-        act: (bloc) => bloc.add(PlainAuthLoginRequestedEvent(
+        act: (bloc) => bloc.add(PlainAuthLoginRequestEvent(
               provider: PlainAuthOAuthProviderType.google,
             )),
         verify: (_) {
@@ -113,7 +113,7 @@ void main() {
               scopes: scopes,
               firebaseAuth: firebaseAuth,
             ),
-        act: (bloc) => bloc.add(PlainAuthLogoutRequestedEvent()),
+        act: (bloc) => bloc.add(PlainAuthLogoutRequestEvent()),
         verify: (_) {
           verify(() => repository.logout()).called(1);
         });

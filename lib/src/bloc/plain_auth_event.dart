@@ -5,13 +5,15 @@ sealed class PlainAuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-final class PlainAuthLogoutRequestedEvent extends PlainAuthEvent {}
+final class PlainAuthLogoutRequestEvent extends PlainAuthEvent {}
 
-final class PlainAuthLoginRequestedEvent extends PlainAuthEvent {
-  PlainAuthLoginRequestedEvent({required this.provider});
+final class PlainAuthLoginRequestEvent extends PlainAuthEvent {
+  PlainAuthLoginRequestEvent({required this.provider});
 
   final PlainAuthOAuthProviderType provider;
 }
+
+final class PlainAuthDeleteAccountRequestEvent extends PlainAuthEvent {}
 
 final class _PlainAuthAuthenticationStateChangedEvent extends PlainAuthEvent {
   _PlainAuthAuthenticationStateChangedEvent({required this.state});

@@ -38,8 +38,8 @@ void main() {
         (widgetTester) async {
       final mockBloc = MockPlainAuthBloc();
       when(() => mockBloc.state).thenReturn(PlainAuthUnauthenticated());
-      when(() => mockBloc
-              .add(PlainAuthLoginRequestedEvent(provider: providerType)))
+      when(() =>
+              mockBloc.add(PlainAuthLoginRequestEvent(provider: providerType)))
           .thenAnswer((invocation) {});
       await widgetTester.pumpWidget(
         BlocProvider<PlainAuthBloc>(
@@ -57,8 +57,9 @@ void main() {
       final finder = find.byKey(Key('${providerType.text} button'));
       await widgetTester.tap(finder);
 
-      verify(() => mockBloc
-          .add(PlainAuthLoginRequestedEvent(provider: providerType))).called(1);
+      verify(() =>
+              mockBloc.add(PlainAuthLoginRequestEvent(provider: providerType)))
+          .called(1);
     });
   });
 }

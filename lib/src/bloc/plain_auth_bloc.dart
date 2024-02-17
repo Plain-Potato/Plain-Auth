@@ -15,20 +15,22 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   /*
   Constructor.
   */
-  PlainAuthBloc({
-    required PlainAuthOAuthRepository plainAuthOAuthRepository,
-    required scopes,
-    required this.firebaseAuth,
-  })  : _repository = plainAuthOAuthRepository,
+  PlainAuthBloc(
+      {required PlainAuthOAuthRepository plainAuthOAuthRepository,
+      required scopes,
+      required this.firebaseAuth,
+      this.onDeleteAccount})
+      : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
         super(PlainAuthUnauthenticated()) {
     /*
     Register event listeners
      */
-    on<PlainAuthLoginRequestedEvent>(_onLoginRequested);
-    on<PlainAuthLogoutRequestedEvent>(_onLogoutRequested);
+    on<PlainAuthLoginRequestEvent>(_onLoginRequested);
+    on<PlainAuthLogoutRequestEvent>(_onLogoutRequested);
     on<_PlainAuthAuthenticationStateChangedEvent>(
         _onAuthenticationStateChanged);
+    on<PlainAuthDeleteAccountRequestEvent>(_onDeleteAccountRequested);
 
     /*
     Listen to authStateChange event and add _PlainAuthAuthenticationStateChangedEvent with state accordingly.
@@ -62,12 +64,13 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   final PlainAuthOAuthRepository _repository;
   final List<PlainAuthOAuthProviderScope> _scopes;
   final FirebaseAuth firebaseAuth;
+  final Future<void> Function(User)? onDeleteAccount;
 
   /*
   Event listeners.
    */
   Future<void> _onLoginRequested(
-      PlainAuthLoginRequestedEvent event, Emitter<PlainAuthState> emit) async {
+      PlainAuthLoginRequestEvent event, Emitter<PlainAuthState> emit) async {
     emit(PlainAuthUnauthenticated(loading: true));
     final user =
         await _repository.login(provider: event.provider, scopes: _scopes);
@@ -77,7 +80,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
   }
 
   void _onLogoutRequested(
-      PlainAuthLogoutRequestedEvent event, Emitter<PlainAuthState> emit) {
+      PlainAuthLogoutRequestEvent event, Emitter<PlainAuthState> emit) {
     _repository.logout();
   }
 
@@ -85,6 +88,18 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       _PlainAuthAuthenticationStateChangedEvent event,
       Emitter<PlainAuthState> emit) async {
     return emit(event.state);
+  }
+
+  _onDeleteAccountRequested(PlainAuthDeleteAccountRequestEvent event,
+      Emitter<PlainAuthState> emit) async {
+    if (firebaseAuth.currentUser == null) {
+      throw PlainAuthDeleteAccountException(
+          message: 'firebaseAuth.currentUser can not be null');
+    }
+    if (onDeleteAccount != null) {
+      await onDeleteAccount!(firebaseAuth.currentUser!);
+    }
+    await firebaseAuth.currentUser?.delete();
   }
 
   /*
@@ -116,5 +131,16 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       case PlainAuthUnauthenticated():
         return {'state': 'PlainAuthUnauthenticated'};
     }
+  }
+}
+
+class PlainAuthDeleteAccountException implements Exception {
+  PlainAuthDeleteAccountException({required this.message});
+
+  final String message;
+
+  @override
+  String toString() {
+    return 'PlainAuthDeleteAccountException: $message';
   }
 }

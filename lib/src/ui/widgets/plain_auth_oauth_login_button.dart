@@ -18,7 +18,7 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
         if ((plainAuthBloc.state as PlainAuthUnauthenticated).loading) {
           return;
         }
-        plainAuthBloc.add(PlainAuthLoginRequestedEvent(provider: provider));
+        plainAuthBloc.add(PlainAuthLoginRequestEvent(provider: provider));
       }
     }
 
@@ -39,7 +39,10 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
             children: [
               SizedBox(
                 width: 40,
-                child: FaIcon(provider.icon),
+                child: FaIcon(
+                  provider.icon,
+                  color: Colors.black,
+                ),
               ),
               Center(
                   child: const Text(
