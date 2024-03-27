@@ -14,8 +14,8 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     void onTap() {
       final plainAuthBloc = context.read<PlainAuthBloc>();
-      if (plainAuthBloc.state is PlainAuthUnauthenticated) {
-        if ((plainAuthBloc.state as PlainAuthUnauthenticated).loading) {
+      if (!plainAuthBloc.state.authenticated) {
+        if (plainAuthBloc.state.loading) {
           return;
         }
         plainAuthBloc.add(PlainAuthLoginRequestEvent(provider: provider));
@@ -29,7 +29,10 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(width: 2),
+          border: Border.all(
+            width: 2,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
@@ -41,13 +44,17 @@ class PlainAuthOAuthLoginButton extends StatelessWidget {
                 width: 40,
                 child: FaIcon(
                   provider.icon,
-                  color: Colors.black,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               Center(
-                  child: const Text(
+                  child: Text(
                 'socialLoginButtonText',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18,
+                  color: Theme.of(context).primaryColor,
+                ),
               ).tr(namedArgs: {'provider': provider.text})),
               const SizedBox(
                 width: 40,

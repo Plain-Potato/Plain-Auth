@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plain_auth/plain_auth.dart';
+import 'package:plain_auth/src/resources/datasources/plain_auth_apple_oauth_provider.dart';
 
 enum PlainAuthOAuthProviderType { google, facebook, apple }
 
@@ -72,6 +73,8 @@ Future<UserCredential?> handleFirebaseAuthError({
       credential = await PlainAuthFacebookOAuthProvider().login();
     } else if (providerId == GoogleAuthProvider.PROVIDER_ID) {
       credential = await PlainAuthGoogleOAuthProvider().login();
+    } else {
+      credential = await PlainAuthAppleOAuthProvider().login();
     }
 
     if (credential != null) {

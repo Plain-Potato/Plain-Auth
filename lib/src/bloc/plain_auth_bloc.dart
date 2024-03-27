@@ -22,7 +22,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       this.onDeleteAccount})
       : _repository = plainAuthOAuthRepository,
         _scopes = scopes,
-        super(PlainAuthUnauthenticated()) {
+        super(const PlainAuthState()) {
     /*
     Register event listeners
      */
@@ -39,7 +39,7 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
       if (user == null) {
         add(
           _PlainAuthAuthenticationStateChangedEvent(
-            state: PlainAuthUnauthenticated(),
+            state: const PlainAuthState(authenticated: false),
           ),
         );
       } else {
@@ -48,12 +48,12 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
               'https://firebasestorage.googleapis.com/v0/b/plain-potato-412823.appspot.com/o/default_images%2Favatar.png?alt=media&token=b255ea7e-b59c-4dd8-81a5-2b9739f4c4e9');
         }
         if (user.displayName == null) {
-          user.updateDisplayName(user.providerData[0].displayName);
+          await user.updateDisplayName('Plain Potato');
         }
-        if (state.runtimeType != PlainAuthAuthenticated) {
+        if (!state.authenticated) {
           add(
             _PlainAuthAuthenticationStateChangedEvent(
-              state: PlainAuthAuthenticated(),
+              state: const PlainAuthState(authenticated: true),
             ),
           );
         }
@@ -71,11 +71,11 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
    */
   Future<void> _onLoginRequested(
       PlainAuthLoginRequestEvent event, Emitter<PlainAuthState> emit) async {
-    emit(PlainAuthUnauthenticated(loading: true));
+    emit(const PlainAuthState(loading: true));
     final user =
         await _repository.login(provider: event.provider, scopes: _scopes);
     if (user == null) {
-      emit(PlainAuthUnauthenticated());
+      emit(const PlainAuthState(loading: false));
     }
   }
 
@@ -108,29 +108,12 @@ class PlainAuthBloc extends HydratedBloc<PlainAuthEvent, PlainAuthState> {
 
   @override
   PlainAuthState? fromJson(Map<String, dynamic> json) {
-    final state = json['state'];
-    switch (state) {
-      case 'PlainAuthAuthenticated':
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          return PlainAuthAuthenticated();
-        } else {
-          return PlainAuthUnauthenticated();
-        }
-      case 'PlainAuthUnauthenticated':
-        return PlainAuthUnauthenticated();
-    }
-    return null;
+    return PlainAuthState.fromJson(json);
   }
 
   @override
   Map<String, dynamic>? toJson(PlainAuthState state) {
-    switch (state) {
-      case PlainAuthAuthenticated():
-        return {'state': 'PlainAuthAuthenticated'};
-      case PlainAuthUnauthenticated():
-        return {'state': 'PlainAuthUnauthenticated'};
-    }
+    return state.toJson();
   }
 }
 
